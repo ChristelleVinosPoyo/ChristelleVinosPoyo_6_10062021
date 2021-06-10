@@ -1,6 +1,8 @@
 const express = require('express');
-const bodyParser = require('body-parser')
-const mongoose = require('mongoose')
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const Sauce = require('./models/Sauce');
+
 const app = express();
 
 mongoose.connect('mongodb+srv://christelle:fWAg38kB2NmbRU3@cluster0.lxhqr.mongodb.net/P6_SoPekocko_DB?retryWrites=true&w=majority',
@@ -19,8 +21,13 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 
 app.post('/api/sauces', (req, res, next) => {
-    console.log(req.body);
-    res.status(201).json({ message: 'objet créé !' })
+    delete req.body._id; //supprimer l'Id généré par le front car un id sera automatiquement généré par mongoDB
+    const sauce = new Sauce({
+      ...req.body
+    });
+    sauce.save()
+    .then(() => res.status(201).json({ message: 'Objet enregistré!' }))
+    .catch(error => res.status(400).json({ error }));
 })
 
 app.use('/api/sauces', (req, res, next) => {
