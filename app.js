@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-const stuffRoutes = require('./routes/stuff');
+const stuffRoutes = require('./routes/stuff'); // changer stuff
 const userRoutes = require('./routes/user');
 
 
@@ -21,7 +21,8 @@ app.use((req, res, next) => {
     next();
   });
 
-app.use(bodyParser.json());
+app.use(express.urlencoded());
+app.use(express.json());
 
 app.use('/api/sauces', stuffRoutes);
 app.use('/api/auth', userRoutes);
