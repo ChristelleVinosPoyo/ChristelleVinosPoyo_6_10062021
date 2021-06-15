@@ -1,10 +1,12 @@
 const Sauce = require('../models/Sauce');
 
 exports.createSauce = (req, res, next) => {
-    delete req.body._id; //supprimer l'Id généré par le front car un id sera automatiquement généré par mongoDB
+    const sauceObject = JSON.parse(req.body.sauce);
+    delete sauceObject._id; //supprimer l'Id généré par le front car un id sera automatiquement généré par mongoDB
     console.log(req.body.sauce);
     const sauce = new Sauce({
-      ...req.body
+      ...sauceObject,
+      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     });
     sauce.save()
     .then(() => res.status(201).json({ message: 'Objet enregistré!' }))
