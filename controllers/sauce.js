@@ -47,18 +47,6 @@ exports.modifySauce = (req, res, next) => {
       .catch(error => res.status(400).json({ error }));
 };
 
-//code d'Emilie :
-// exports.modifySauce = (req, res, next) => {//condition ternaire//
-//   const sauceObject = req.file ?//si req.file(fichier image) existe//
-//     {
-//       ...JSON.parse(req.body.sauce),
-//       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`//on modifie l'URL de l'image de manière dynamique//
-//     } : { ...req.body };//si req.file n'existe pas on fait une copie de req.body//
-//   Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })//on passe en premier argument l'objet qu'on souhaite modifier et en deuxième argument la nouvelle version de l'objet
-//     .then(() => res.status(200).json({ message: 'Sauce modifiée !'}))
-//     .catch(error => res.status(400).json({ error }));
-// };
-
 exports.deleteSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then( sauce => {
@@ -75,6 +63,9 @@ exports.deleteSauce = (req, res, next) => {
     .catch( error => { res.status(500).json({ error: error});});
 };
 
-// exports.likeSauce = (req, res, next) => {
-//   console.log(req.body);
-// };
+exports.likeSauce = (req, res, next) => {
+  const sauceObject = JSON.parse(req.body.like);
+  const like = req.body.like;
+  Sauce.findOne({ _id: req.params.id });
+  console.log("route likeSauce", like);
+};
