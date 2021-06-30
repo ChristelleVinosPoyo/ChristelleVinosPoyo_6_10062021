@@ -9,12 +9,12 @@ exports.getAllSauce = (req, res, next) => {
 
 exports.createSauce = (req, res, next) => {
   const sauceObject = JSON.parse(req.body.sauce);
-  delete sauceObject._id;
+  delete sauceObject._id; // supp id généré par le front. MongoDB génère automatiquement un id
   const sauce = new Sauce({
-    ...sauceObject,
+    ...sauceObject, // opérateur spread pour copier rea.body.sauce
     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   });
-  sauce.save()
+  sauce.save() // enregistement de sauce dans la base de données MongoDB
     .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
     .catch(error => res.status(400).json({ error }));
 };

@@ -23,12 +23,12 @@ exports.login = (req, res, next) => {
             if(!user) {
                 return res.status(401).json({ error: 'Utilisateur non trouvé! ' })
             }
-            bcrypt.compare(req.body.password, user.password)
+            bcrypt.compare(req.body.password, user.password) // on compare le password de la requête au hash sauvegardé dans la base de données
                 .then(valid => {
                     if (!valid) {
                         return res.status(401).json({ error: 'Mot de passe incorrect ! ' })
                     }
-                    res.status(200).json({
+                    res.status(200).json({ // si comparaison validé, on renvoie user._id et le token d'authentification (c'est ce qui est demandé par le front)
                         userId: user._id,
                         token: jwt.sign(
                             { userId: user._id }, // 1er argument : ce qu'on veut encoder
