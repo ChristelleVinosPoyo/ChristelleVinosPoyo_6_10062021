@@ -35,8 +35,7 @@ exports.modifySauce = (req, res, next) => {
     // s'il y a une image dans la requête, on supprime l'image actuellement enregistrée
     if(req.file){
       const filename = sauce.imageUrl.split('/images/')[1]; // pour supp l'image il faut son nom (filename) que l'on récupère à partir de l'url
-      fs.unlink(`images/${filename}`, () => { console.log("photo supprimée"); // unlink pour supp le fichier image. 1er param est le chemin où se trouve l'image
-      })
+      fs.unlink(`images/${filename}`, () => res.status(200).json({ message: 'Photo supprimée !'})) // unlink pour supp le fichier image. 1er param est le chemin où se trouve l'image
     }
     
     const sauceObject = req.file ? // opérateur ternaire
@@ -55,7 +54,7 @@ exports.modifySauce = (req, res, next) => {
 };
 
 exports.deleteSauce = (req, res, next) => {
-  
+
   Sauce.findOne({ _id: req.params.id })
     .then( sauce => {
       const filename = sauce.imageUrl.split('/images/')[1]; // pour supp l'image il faut son nom (filename) que l'on récupère à partir de l'url
