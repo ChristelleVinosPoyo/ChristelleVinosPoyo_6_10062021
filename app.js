@@ -29,6 +29,7 @@ app.use((req, res, next) => {  //Middleware general appliqué à toutes les rout
     next();
   });
 
+// sécurité
 app.use(express.urlencoded()); // pour parlier à l'utilisation de bodyparser qui est déprécié : permet de transformer req.body en JS utilisable
 app.use(express.json()); // pour parlier à l'utilisation de bodyparser qui est déprécié 
 app.use(helmet());

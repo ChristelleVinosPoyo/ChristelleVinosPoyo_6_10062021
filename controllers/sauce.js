@@ -2,7 +2,8 @@ const Sauce = require('../models/Sauce');
 const fs = require('fs');
 
 exports.getAllSauce = (req, res, next) => {
-    Sauce.find() //pour retourner la liste complète des sauces
+  // Utilisation de la methode .find de mongoose pour retourner la liste complète des sauces
+  Sauce.find() 
       .then(sauces => res.status(200).json(sauces))
       .catch(error => res.status(400).json({ error }));
   };
