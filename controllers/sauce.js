@@ -8,12 +8,14 @@ exports.getAllSauce = (req, res, next) => {
   };
 
 exports.createSauce = (req, res, next) => {
+
   const sauceObject = JSON.parse(req.body.sauce);
   delete sauceObject._id; // supp id généré par le front. MongoDB génère automatiquement un id
   const sauce = new Sauce({
     ...sauceObject, // opérateur spread pour copier rea.body.sauce
-    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` // req.protocol = http, req.get('host') = localhost300
   });
+
   sauce.save() // enregistement de sauce dans la base de données MongoDB
     .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
     .catch(error => res.status(400).json({ error }));
@@ -26,22 +28,39 @@ exports.getOneSauce = (req, res, next) => {
   };
 
 exports.modifySauce = (req, res, next) => {
-  const sauceObject = req.file ? // opérateur ternaire
-    { 
-      ...JSON.parse(req.body.sauce),
-      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : { ...req.body };
+  
+  Sauce.findOne({ _id: req.params.id })
+  .then( sauce => {
+
+    // s'il y a une image dans la requête, on supprime l'image actuellement enregistrée
+    if(req.file){
+      const filename = sauce.imageUrl.split('/images/')[1]; // pour supp l'image il faut son nom (filename) que l'on récupère à partir de l'url
+      fs.unlink(`images/${filename}`, () => { console.log("photo supprimée"); // unlink pour supp le fichier image. 1er param est le chemin où se trouve l'image
+      })
+    }
+    
+    const sauceObject = req.file ? // opérateur ternaire
+      { 
+        ...JSON.parse(req.body.sauce), // si req.file existe 
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+      } : { ...req.body,}; // si req.file n'existe pas (pas d'image), on copie req.body
+
     Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
-      .then(() => res.status(200).json({ message: 'Objet modifié !'}))
-      .catch(error => res.status(400).json({ error }));
+    .then(() => res.status(200).json({ message: 'Objet modifié !'}))
+    .catch(error => res.status(400).json({ error }));
+
+  })
+  .catch( error => { res.status(500).json({ error: error})});
+
 };
 
 exports.deleteSauce = (req, res, next) => {
+  
   Sauce.findOne({ _id: req.params.id })
     .then( sauce => {
-      const filename = sauce.imageUrl.split('/images/')[1];
-      fs.unlink(`images/${filename}`, () => {
-        Sauce.deleteOne({_id: req.params.id})
+      const filename = sauce.imageUrl.split('/images/')[1]; // pour supp l'image il faut son nom (filename) que l'on récupère à partir de l'url
+      fs.unlink(`images/${filename}`, () => { // unlink pour supp le fichier image. 1er param est le chemin où se trouve l'image
+        Sauce.deleteOne({_id: req.params.id}) // 2eme argument de unlink : callback qui dit ce qu'il faut faire après avoir supp l'image = sauce.deleteOne
           .then(() => {res.status(200).json({
               message: 'Sauce supprimée!'
             });

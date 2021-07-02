@@ -34,7 +34,7 @@ app.use(express.json()); // pour parlier à l'utilisation de bodyparser qui est 
 app.use(helmet());
 app.use(limiter);
 
-app.use('/images', express.static(path.join(__dirname, 'images'))); // express.static pour servir le dossier statique 'images'
+app.use('/images', express.static(path.join(__dirname, 'images'))); // express.static pour servir le dossier statique 'images' / path.join pour créer un chemin dynamique vers l'image souhaitée
 
 app.use('/api/sauces', sauceRoutes);
 
